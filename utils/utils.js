@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom')
-const githubUrlRegex = /(https?):\/\/(www.)?(github.com\/)(.*?\/)(.*?\/)(.*?)(\/?|#[-\d\w._]+?)(\/)?$/gmi
+const githubUrlRegex = /(https?:\/\/)((www.)?github.com\/)(\S*?\/)(\S*?\/)(\S*)(\/?|#[-\d\w._]+?)/gmi
 
 /* eslint-disable no-unused-vars */
 const updateLinksHtml = async html => {
@@ -16,7 +16,7 @@ const updateLinksHtml = async html => {
             a.href = a.innerHTML = `https://github.com${nodeList[0].href}`
           }
         } catch (e) {
-          console.log(e)
+          console.log(e.message)
           return html
         }
       };
@@ -46,7 +46,7 @@ const updateLinksText = async text => {
       return match
     })
   } catch (e) {
-    console.log(e)
+    console.log(e.message)
   }
 
   return text

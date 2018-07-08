@@ -7,9 +7,11 @@ const { updateLinksText } = require('./utils/utils')
 module.exports = exports = app => {
   app.log('The app was loaded!')
 
-  app.on('commit_comment', async context => {
-    // TODO:
-    app.log('A commit comment!')
+  app.on('commit_comment.created', async context => {
+    const {id: comment_id, body} = context.payload.comment
+    if (!context.payload.changes || context.payload.changes.body.from !== body) {
+      context.github.repos.updateCommitComment({...context.repo(), comment_id, body: await updateLinksText(body)})
+    }
   })
 
   // TODO:

@@ -10,7 +10,10 @@ module.exports = exports = app => {
   app.on('commit_comment.created', async context => {
     const {id: comment_id, body} = context.payload.comment
     if (!context.payload.changes || context.payload.changes.body.from !== body) {
-      context.github.repos.updateCommitComment({...context.repo(), comment_id, body: await updateLinksText(body)})
+      const updatedBody = await updateLinksText(body);
+      if (updatedBody !== body) {
+        context.github.repos.updateCommitComment({...context.repo(), comment_id, body: updatedBody})
+      }
     }
   })
 
@@ -21,22 +24,32 @@ module.exports = exports = app => {
   // ]
 
   app.on(['issues.opened', 'issues.edited'], async context => {
-    if (!context.payload.changes || context.payload.changes.body.from !== context.payload.issue.body) {
-      context.github.issues.edit(context.issue({body: await updateLinksText(context.payload.issue.body)}))
+    const {body} = context.payload.issue.body
+    if (!context.payload.changes || context.payload.changes.body.from !== body) {
+      const updatedBody = await updateLinksText(body)
+      if (updatedBody !== body) {
+        context.github.issues.edit(context.issue({body: updatedBody}))
+      }
     }
   })
 
   app.on(['issue_comment.created', 'issue_comment.edited'], async context => {
     const {id: comment_id, body} = context.payload.comment
     if (!context.payload.changes || context.payload.changes.body.from !== body) {
-      context.github.issues.editComment({...context.repo(), comment_id, body: await updateLinksText(body)})
+      const updatedBody = await updateLinksText(body)
+      if (updatedBody !== body) {
+        context.github.issues.editComment({...context.repo(), comment_id, body: updatedBody})
+      }
     }
   })
 
   app.on(['pull_request.opened', 'pull_request.edited'], async context => {
     const {number, title, state, base, maintainer_can_modify, body} = context.payload.pull_request
     if (!context.payload.changes || context.payload.changes.body.from !== body) {
-      context.github.pullRequests.update({...context.repo(), number, title, state, base, maintainer_can_modify, body: await updateLinksText(body)})
+      const updatedBody = await updateLinksText(body)
+      if (updatedBody !== body) {
+        context.github.pullRequests.update({...context.repo(), number, title, state, base, maintainer_can_modify, body: updatedBody})
+      }
     }
   })
 }

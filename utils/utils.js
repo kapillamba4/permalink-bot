@@ -40,7 +40,8 @@ const updateLinksText = async text => {
       const dom = JSDOM.fragment(replacement[currentIdx++].serialize())
       const nodeList = dom.querySelectorAll('a.js-permalink-shortcut')
       if (nodeList.length && nodeList[0] && nodeList[0].href) {
-        return `https://github.com${nodeList[0].href}`
+        console.log(`https://github.com${nodeList[0].href}${new URL(match).hash}`);
+        return `https://github.com${nodeList[0].href}${new URL(match).hash}`
       }
 
       return match

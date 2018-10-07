@@ -24,7 +24,7 @@ module.exports = exports = app => {
   // ]
 
   app.on(['issues.opened', 'issues.edited'], async context => {
-    const {body} = context.payload.issue.body
+    const {body} = context.payload.issue
     if (!context.payload.changes || context.payload.changes.body.from !== body) {
       const updatedBody = await updateLinksText(body)
       if (updatedBody !== body) {
